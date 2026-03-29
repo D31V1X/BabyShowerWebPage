@@ -66,13 +66,15 @@ export default function Home() {
           // Actualización optimista del estado local sin recargar
           setGifts((currentGifts) => 
             currentGifts.map((gift) => 
-              gift.id === payload.new.id ? { ...gift, comprado: payload.new.comprado } : gift
+              gift.id === payload.new.id 
+                ? { ...gift, comprado: payload.new.comprado, comprador: payload.new.comprador } 
+                : gift
             )
           );
           // Si el modal está abierto en ese mismo regalo, lo actualizamos pero no lo cerramos
           setSelectedGift((current) => {
             if (current && current.id === payload.new.id) {
-              return { ...current, comprado: payload.new.comprado };
+              return { ...current, comprado: payload.new.comprado, comprador: payload.new.comprador };
             }
             return current;
           });
@@ -86,11 +88,11 @@ export default function Home() {
   }, [fetchGifts]);
 
   // Manejador para comprar un regalo
-  const handlePurchase = async (giftId: string) => {
+  const handlePurchase = async (giftId: string, compradorName: string) => {
     try {
       const { error } = await supabase
         .from('gifts')
-        .update({ comprado: true })
+        .update({ comprado: true, comprador: compradorName })
         .eq('id', giftId);
       
       if (error) throw error;
@@ -98,10 +100,10 @@ export default function Home() {
       // La UI se actualizará automáticamente gracias a la suscripción en tiempo real,
       // pero actualizamos localmente también para que sea inmediato para el usuario que hizo click.
       setGifts(currentGifts => 
-        currentGifts.map(g => g.id === giftId ? { ...g, comprado: true } : g)
+        currentGifts.map(g => g.id === giftId ? { ...g, comprado: true, comprador: compradorName } : g)
       );
       
-      setSelectedGift(current => current ? { ...current, comprado: true } : null);
+      setSelectedGift(current => current ? { ...current, comprado: true, comprador: compradorName } : null);
       
     } catch (error) {
       console.error("No se pudo marcar como comprado:", error);

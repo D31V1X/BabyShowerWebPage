@@ -9,18 +9,27 @@ import { useState } from "react";
 interface GiftModalProps {
   gift: Gift | null;
   onClose: () => void;
-  onPurchase: (giftId: string) => Promise<void>;
+  onPurchase: (giftId: string, compradorName: string) => Promise<void>;
 }
 
 export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showInput, setShowInput] = useState(false);
+  const [compradorName, setCompradorName] = useState("");
 
   if (!gift) return null;
 
   const handlePurchase = async () => {
+    if (!compradorName.trim()) return;
     setIsUpdating(true);
-    await onPurchase(gift.id);
+    await onPurchase(gift.id, compradorName.trim());
     setIsUpdating(false);
+  };
+
+  const handleClose = () => {
+    setShowInput(false);
+    setCompradorName("");
+    onClose();
   };
 
   return (
@@ -30,7 +39,7 @@ export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps)
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-totoro/60 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       >
         <motion.div
           initial={{ scale: 0.9, y: 20, opacity: 0 }}
@@ -42,7 +51,7 @@ export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps)
         >
           {/* Botón Cerrar */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 z-10 p-2 text-totoro bg-belly/50 backdrop-blur-md rounded-full hover:bg-forest hover:text-white transition-colors"
           >
             <X size={24} />
@@ -89,29 +98,61 @@ export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps)
 
               {/* Opción 2: Marcar como Comprado */}
               {!gift.comprado ? (
-                <button
-                  onClick={handlePurchase}
-                  disabled={isUpdating}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold bg-sunset text-white shadow-md hover:shadow-lg hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
-                >
-                  {isUpdating ? (
-                    <span className="animate-pulse">Actualizando la magia...</span>
-                  ) : (
-                    <>
-                      <CheckCircle size={20} />
-                      ¡Ya lo compré!
-                    </>
-                  )}
-                </button>
+                showInput ? (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }} 
+                    animate={{ opacity: 1, height: "auto" }} 
+                    className="flex flex-col gap-2 mt-2"
+                  >
+                    <label className="text-sm font-bold ml-1">¿A nombre de quién estará este regalo?</label>
+                    <input 
+                      type="text" 
+                      placeholder="Tu nombre completo"
+                      value={compradorName}
+                      onChange={(e) => setCompradorName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-forest/30 bg-white font-medium focus:outline-none focus:border-forest"
+                      autoFocus
+                    />
+                    <div className="flex gap-2 mt-1">
+                      <button
+                        onClick={() => setShowInput(false)}
+                        className="w-1/3 py-2 rounded-xl font-bold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+                        disabled={isUpdating}
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handlePurchase}
+                        disabled={isUpdating || !compradorName.trim()}
+                        className="w-2/3 flex items-center justify-center gap-2 py-2 rounded-xl font-bold bg-sunset text-white shadow-md hover:bg-sunset/90 transition-all disabled:opacity-50"
+                      >
+                        {isUpdating ? "Confirmando..." : "Confirmar Elegido"}
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <button
+                    onClick={() => setShowInput(true)}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold bg-sunset text-white shadow-md hover:shadow-lg hover:-translate-y-1 transition-all"
+                  >
+                    <CheckCircle size={20} />
+                    ¡Lo voy a dar yo!
+                  </button>
+                )
               ) : (
-                <div className="w-full py-4 text-center rounded-xl bg-forest/20 text-forest font-bold border-2 border-dashed border-forest/30 flex items-center justify-center gap-2">
-                  <CheckCircle size={24} />
-                  Este regalo ya fue elegido
+                <div className="w-full py-4 text-center rounded-xl bg-forest/20 text-forest font-bold border-2 border-dashed border-forest/30 flex flex-col items-center justify-center gap-1">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={24} />
+                    Este regalo ya fue elegido
+                  </div>
+                  {gift.comprador && (
+                     <span className="text-sm opacity-80 mt-1">por {gift.comprador}</span>
+                  )}
                 </div>
               )}
               
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="w-full py-2 mt-2 text-sm font-semibold text-totoro/70 hover:text-totoro underline decoration-dotted transition-colors"
                 >
                  Volver y seguir explorando

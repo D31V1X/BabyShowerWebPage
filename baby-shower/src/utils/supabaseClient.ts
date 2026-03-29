@@ -14,5 +14,6 @@ export type Gift = {
   imagen_url: string;
   tienda_url: string;
   comprado: boolean;
+  comprador?: string;
   created_at?: string;
 };
