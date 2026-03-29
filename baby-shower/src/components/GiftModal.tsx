@@ -37,7 +37,7 @@ export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps)
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="relative bg-belly w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden"
+          className="relative bg-belly w-full max-w-lg rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Botón Cerrar */}
@@ -49,7 +49,7 @@ export default function GiftModal({ gift, onClose, onPurchase }: GiftModalProps)
           </button>
 
           {/* Imagen */}
-          <div className="relative h-64 w-full bg-white flex items-center justify-center">
+          <div className="relative h-48 sm:h-64 w-full bg-white flex items-center justify-center shrink-0">
             {gift.imagen_url && (
               <img
                 src={gift.imagen_url}
