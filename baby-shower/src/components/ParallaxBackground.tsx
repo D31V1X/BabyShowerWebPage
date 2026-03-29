@@ -7,7 +7,7 @@ export default function ParallaxBackground() {
   const { scrollY } = useScroll();
   // El fondo se mueve más lento que el scroll para crear efecto de profundidad
   const yBg = useTransform(scrollY, [0, 1000], [0, 150]);
-  
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -18,14 +18,14 @@ export default function ParallaxBackground() {
 
   return (
     <div className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden flex justify-center items-center shadow-inner">
-      
+
       {/* Imagen de Fondo (Wallpaper completo) */}
-      <motion.div 
+      <motion.div
         style={{ y: yBg }}
         className="absolute inset-0 z-0 w-full h-[120%] -top-[10%]"
       >
-        <img 
-          src="/assets/971-9712230_my-neighbor-totoro.png" 
+        <img
+          src="/assets/Gemini_Generated_Image_4w6ca24w6ca24w6c.png"
           alt="Bosque Totoro"
           className="w-full h-full object-cover object-center"
         />
@@ -35,7 +35,7 @@ export default function ParallaxBackground() {
       </motion.div>
 
       {/* Título Principal */}
-      <motion.div 
+      <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -53,7 +53,7 @@ export default function ParallaxBackground() {
           </p>
         </div>
       </motion.div>
-      
+
       {/* Decoración Totoro (Cutout) */}
       <motion.div
         initial={{ y: 200, opacity: 0 }}
@@ -61,8 +61,8 @@ export default function ParallaxBackground() {
         transition={{ delay: 0.4, duration: 1.5, type: "spring" }}
         className="absolute bottom-0 right-[5%] z-10 pointer-events-none w-48 h-48 md:w-80 md:h-80"
       >
-        <img 
-          src="/assets/Totoro-PNG-Cutout.png" 
+        <img
+          src="/assets/Totoro-PNG-Cutout.png"
           alt="Totoro Decoración"
           className="w-full h-full object-contain drop-shadow-2xl"
         />
